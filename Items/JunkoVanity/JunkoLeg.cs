@@ -4,21 +4,20 @@ using Terraria.ModLoader;
 
 namespace JunkoAndFriends.Items.JunkoVanity
 {
-    [AutoloadEquip(EquipType.Legs)]
-    public class JunkoLeg : ModItem
+    public class JunkoLeg :  ModItem
     {
-		public override void SetStaticDefaults()
-		{
-			DisplayName.SetDefault("Junko's Legs");
-		}
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Compensation");
+            Tooltip.SetDefault("Sell to any town NPC for compensation");
+        }
 
-		public override void SetDefaults()
-		{
-			item.width = 32;
-			item.height = 12;
-			item.rare = ItemRarityID.Green;
-			item.vanity = true;
-			item.value = Item.buyPrice(gold: 1);
-		}
-	}
+        public override void SetDefaults()
+        {
+            item.width = 26;
+            item.height = 26;
+            item.value = Item.sellPrice(gold: 4);
+            item.rare = ItemRarityID.Gray;
+        }
+    }
 }

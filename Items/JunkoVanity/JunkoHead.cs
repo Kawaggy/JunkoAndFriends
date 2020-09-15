@@ -9,7 +9,7 @@ namespace JunkoAndFriends.Items.JunkoVanity
     {
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Junko's Head");
+			DisplayName.SetDefault("Junko's Chinese Crown");
 		}
 
 		public override void SetDefaults()

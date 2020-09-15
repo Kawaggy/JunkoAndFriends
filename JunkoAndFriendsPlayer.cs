@@ -72,7 +72,7 @@ namespace JunkoAndFriends
             Player drawPlayer = drawInfo.drawPlayer;
             Mod mod = ModLoader.GetMod("JunkoAndFriends");
 
-            if (drawPlayer.armor[10].type != ModContent.ItemType<JunkoHead>() || drawPlayer.armor[11].type != ModContent.ItemType<JunkoBody>() || drawPlayer.armor[12].type != ModContent.ItemType<JunkoLeg>())
+            if (drawPlayer.armor[10].type != ModContent.ItemType<JunkoHead>() || drawPlayer.armor[11].type != ModContent.ItemType<JunkoBody>())
                 return;
 
             Texture2D texture = mod.GetTexture("ExtraTextures/JunkoAura");

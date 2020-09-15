@@ -17,8 +17,6 @@ namespace JunkoAndFriends
                 ++nextSlot;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<JunkoBody>());
                 ++nextSlot;
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<JunkoLeg>());
-                ++nextSlot;
 
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<FlandreHead>());
                 ++nextSlot;

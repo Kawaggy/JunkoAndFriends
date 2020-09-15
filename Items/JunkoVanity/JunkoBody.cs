@@ -9,16 +9,22 @@ namespace JunkoAndFriends.Items.JunkoVanity
     {
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Junko's Body");
+			DisplayName.SetDefault("Junko's Dress");
 		}
 
 		public override void SetDefaults()
 		{
-			item.width = 28;
-			item.height = 20;
+			item.width = 42;
+			item.height = 42;
 			item.rare = ItemRarityID.Green;
 			item.vanity = true;
 			item.value = Item.buyPrice(gold: 1);
 		}
-	}
+
+        public override void SetMatch(bool male, ref int equipSlot, ref bool robes)
+        {
+			robes = true;
+			equipSlot = mod.GetEquipSlot("JunkoVanity_Legs", EquipType.Legs);
+        }
+    }
 }
