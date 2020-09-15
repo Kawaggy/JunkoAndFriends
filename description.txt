@@ -1,0 +1,3 @@
+Adds Touhou Vanity. Buy them from the Clothier.
+
+Original sprite by William (William#9010), sheeted and other additions by Yharex87 (Yharex87#6681) and code by Kawaggy (Kawaggy#0290).

@@ -1,0 +1,7 @@
+displayName = Junko & Friends
+author = Kawaggy, William and Yharex87
+version = 0.2.0.0
+hideCode = false
+hideResources = false
+includeSource = true
+buildIgnore = build.txt, .gitattributes, .gitignore, .git/, .vs/, .idea/, bin/, obj/, Thumbs.db, README.md
