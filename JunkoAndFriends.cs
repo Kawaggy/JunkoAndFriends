@@ -26,6 +26,7 @@ namespace JunkoAndFriends
         {
             Instance = null;
             junkoVanity = null;
+            JunkoAndFriendsPlayer.guraGawrDownFrames = null;
         }
     }
 }

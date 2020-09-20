@@ -1,4 +1,5 @@
 ﻿using JunkoAndFriends.Items.FlandreVanity;
+using JunkoAndFriends.Items.GuraGawrVanity;
 using JunkoAndFriends.Items.JunkoVanity;
 using JunkoAndFriends.Items.RemiliaVanity;
 using Terraria;
@@ -31,6 +32,46 @@ namespace JunkoAndFriends
                 ++nextSlot;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<RemiliaLeg>());
                 ++nextSlot;
+            }
+
+            if (type == NPCID.Pirate)
+            {
+                if (NPC.downedMoonlord)
+                {
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<GuraGawrHeadHair>());
+                    ++nextSlot;
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<GuraGawrHeadHoodie>());
+                    ++nextSlot;
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<GuraGawrBody>());
+                    ++nextSlot;
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<GuraGawrLeg>());
+                    ++nextSlot;
+                }
+            }
+        }
+
+        public override void NPCLoot(NPC npc)
+        {
+            if (npc.type == NPCID.Shark)
+            {
+                float chance = NPC.downedPlantBoss ? 10f : 1f;
+                bool flag = Main.rand.NextBool();
+                if (Main.rand.NextFloat() < 0.009f * chance && flag)
+                {
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHair>());
+                }
+                if (Main.rand.NextFloat() < 0.009f * chance && !flag)
+                {
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHoodie>());
+                }
+                if (Main.rand.NextFloat() < 0.002f * chance)
+                {
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrBody>());
+                }
+                if (Main.rand.NextFloat() < 0.007f * chance)
+                {
+                    Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrLeg>());
+                }
             }
         }
     }
