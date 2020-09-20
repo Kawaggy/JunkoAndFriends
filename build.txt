@@ -1,6 +1,6 @@
 displayName = Junko & Friends
 author = Kawaggy, William and Yharex87
-version = 0.2.2.0
+version = 0.3.0.0
 hideCode = false
 hideResources = false
 includeSource = true
