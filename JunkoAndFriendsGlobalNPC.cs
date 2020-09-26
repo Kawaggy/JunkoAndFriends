@@ -56,21 +56,33 @@ namespace JunkoAndFriends
             {
                 float chance = NPC.downedPlantBoss ? 10f : 1f;
                 bool flag = Main.rand.NextBool();
-                if (Main.rand.NextFloat() < 0.009f * chance && flag)
+                if (Main.rand.Next(9927) == 0)
                 {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHair>());
-                }
-                if (Main.rand.NextFloat() < 0.009f * chance && !flag)
-                {
-                    Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHoodie>());
-                }
-                if (Main.rand.NextFloat() < 0.002f * chance)
-                {
+                    if (flag)
+                        Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHair>());
+                    else
+                        Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHoodie>());
                     Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrBody>());
-                }
-                if (Main.rand.NextFloat() < 0.007f * chance)
-                {
                     Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrLeg>());
+                }
+                else
+                {
+                    if (Main.rand.NextFloat() < 0.009f * chance && flag)
+                    {
+                        Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHair>());
+                    }
+                    if (Main.rand.NextFloat() < 0.009f * chance && !flag)
+                    {
+                        Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrHeadHoodie>());
+                    }
+                    if (Main.rand.NextFloat() < 0.002f * chance)
+                    {
+                        Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrBody>());
+                    }
+                    if (Main.rand.NextFloat() < 0.007f * chance)
+                    {
+                        Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrLeg>());
+                    }
                 }
             }
         }
