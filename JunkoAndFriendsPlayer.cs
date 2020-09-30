@@ -22,7 +22,6 @@ namespace JunkoAndFriends
         private bool guraGawrDoA = false;
         private int guraGawrACounter = 0;
         private int guraGawrAFrame = 0;
-        private float guraGawrARotation = 0.0f;
         private bool guraGawrDoTail = false;
         private int guraGawrTailCounter = 0;
         private int guraGawrTailFrame = 0;
@@ -215,19 +214,6 @@ namespace JunkoAndFriends
                 TurnHeadTransparent(ref drawInfo);
             }
         }
-
-        public static List<int> guraGawrDownFrames = new List<int>
-        {
-            56,
-            112,
-            168,
-            224,
-            336,
-            560,
-            616,
-            672,
-            728
-        };
 
         private void TurnFullyTransparent(ref PlayerDrawInfo drawInfo)
         {
@@ -430,11 +416,11 @@ namespace JunkoAndFriends
             }
 
             bool flag = ((int)spriteEffects == 0 || (int)spriteEffects == 1);
-            if (guraGawrDownFrames.Contains(drawPlayer.bodyFrame.Y) && flag)
+            if (JunkoAndFriends.guraGawrDownFrames.Contains(drawPlayer.bodyFrame.Y) && flag)
             {
                 drawFaceY += 2;
             }
-            else if (guraGawrDownFrames.Contains(drawPlayer.bodyFrame.Y))
+            else if (JunkoAndFriends.guraGawrDownFrames.Contains(drawPlayer.bodyFrame.Y))
             {
                 drawFaceY -= 2;
             }
