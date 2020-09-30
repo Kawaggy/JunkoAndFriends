@@ -307,11 +307,13 @@ namespace JunkoAndFriends
 
             bool hasRemiWings = false;
             int wingPosition = -1;
+            int slot = 0;
             for (int i = 3; i < 8 + drawPlayer.extraAccessorySlots; i++)
             {
                 Item item = drawPlayer.armor[i];
                 if (item.type == ModContent.ItemType<RemiliaWings>())
                 {
+                    slot = i;
                     hasRemiWings = true;
                     wingPosition = i;
                 }
@@ -342,6 +344,9 @@ namespace JunkoAndFriends
                 if (item.wingSlot > 0 && item.type != ModContent.ItemType<RemiliaWings>() && i > wingPosition)
                     hasOtherWings = true;
             }
+
+            if (drawPlayer.hideVisual[slot] && drawPlayer.Friends().remiWingFrame == 0 && drawPlayer.velocity.Y == 0)
+                return;
 
             if (hasOtherWings)
                 return;
