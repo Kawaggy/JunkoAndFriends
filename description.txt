@@ -1,3 +1,6 @@
-Adds Touhou Vanity. Buy them from the Clothier.
+Adds various Vanities. Buy them from the Clothier or fight random enemies.
+For Gura Gawr vanity kill Sharks or buy from the Pirate Post-Moonlord.
+For Mori Calliope vanity kill Reapers or buy from the Clothier post Solar-Eclipse.
+Craft Remilia's wings or Flandre's wings in Hardmode.
 
-Original sprite by William (William#9010), sheeted and other additions by Yharex87 (Yharex87#6681) and code by Kawaggy (Kawaggy#0290).
+Original sprites by William (William#9010), sheeted and other additions by Yharex87 (Yharex87#6681) and code by Kawaggy (Kawaggy#0290).

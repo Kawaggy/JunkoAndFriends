@@ -1,6 +1,7 @@
 ﻿using JunkoAndFriends.Items.FlandreVanity;
 using JunkoAndFriends.Items.GuraGawrVanity;
 using JunkoAndFriends.Items.JunkoVanity;
+using JunkoAndFriends.Items.MoriVanity;
 using JunkoAndFriends.Items.RemiliaVanity;
 using Terraria;
 using Terraria.ID;
@@ -10,6 +11,7 @@ namespace JunkoAndFriends
 {
     public class JunkoAndFriendsGlobalNPC : GlobalNPC
     {
+        private const float vanityDrop = 0.01f;
         public override void SetupShop(int type, Chest shop, ref int nextSlot)
         {
             if (type == NPCID.Clothier)
@@ -32,6 +34,14 @@ namespace JunkoAndFriends
                 ++nextSlot;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<RemiliaLeg>());
                 ++nextSlot;
+
+                if (JunkoAndFriendsWorld.eclipsePassed)
+                {
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<MoriHead>());
+                    ++nextSlot;
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<MoriBody>());
+                    ++nextSlot;
+                }
             }
 
             if (type == NPCID.Pirate)
@@ -82,6 +92,22 @@ namespace JunkoAndFriends
                     if (Main.rand.NextFloat() < 0.007f * chance)
                     {
                         Item.NewItem(npc.Hitbox, ModContent.ItemType<GuraGawrLeg>());
+                    }
+                }
+            }
+
+            if (npc.type == NPCID.Reaper)
+            {
+                if (Main.rand.NextFloat() < vanityDrop)
+                {
+                    switch(Main.rand.Next(2))
+                    {
+                        case 0:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<MoriHead>());
+                            break;
+                        case 1:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<MoriBody>());
+                            break;
                     }
                 }
             }

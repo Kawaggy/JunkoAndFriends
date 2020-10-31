@@ -18,7 +18,8 @@ namespace JunkoAndFriends
             junkoVanity = ModLoader.GetMod("JunkoVanity");
             if (!Main.dedServ)
             {
-                AddEquipTexture(null, EquipType.Legs, "JunkoVanity_Legs", "JunkoAndFriends/Items/JunkoVanity/JunkoLeg_Legs");
+                AddEquipTexture(null, EquipType.Legs, "Junko_Legs", "JunkoAndFriends/Items/JunkoVanity/JunkoLeg_Legs");
+                AddEquipTexture(null, EquipType.Legs, "MoriLeg_Legs", "JunkoAndFriends/Items/MoriVanity/MoriLeg_Legs");
                 GameShaders.Armor.BindShader(ModContent.ItemType<WaveShaderDye>(), new ArmorShaderData(new Ref<Effect>(GetEffect("Effects/WaveShader")), "WaveShaderPass"));
             }
 

@@ -24,7 +24,7 @@ namespace JunkoAndFriends.Items.JunkoVanity
         public override void SetMatch(bool male, ref int equipSlot, ref bool robes)
         {
 			robes = true;
-			equipSlot = mod.GetEquipSlot("JunkoVanity_Legs", EquipType.Legs);
+			equipSlot = mod.GetEquipSlot("Junko_Legs", EquipType.Legs);
         }
     }
 }
