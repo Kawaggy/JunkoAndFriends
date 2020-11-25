@@ -1,13 +1,16 @@
 ﻿using JunkoAndFriends.Items;
+using JunkoAndFriends.Items.BerserkerVanity;
 using JunkoAndFriends.Items.FlandreVanity;
 using JunkoAndFriends.Items.GuraGawrVanity;
 using JunkoAndFriends.Items.JunkoVanity;
 using JunkoAndFriends.Items.RemiliaVanity;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameInput;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,6 +30,15 @@ namespace JunkoAndFriends
         private int guraGawrTailFrame = 0;
         private float guraGawrTridentRotation = 0f;
 
+        private bool vanitySpecialEffect = false;
+        private int vanitySpecialEffectCooldown = 0;
+
+        private bool berserkerIsBerserk = false;
+        private bool berserkerDoTransformation = false;
+        private int berserkerHelmetFrame = 0;
+        private int berserkerHelmetCounter = 0;
+        private float berserkerCapeRotation = 0f;
+
         public override void Initialize()
         {
             remiWingFrameCounter = 0;
@@ -38,12 +50,28 @@ namespace JunkoAndFriends
             guraGawrDoTail = false;
             guraGawrTailCounter = 0;
             guraGawrTailFrame = 0;
+
+            vanitySpecialEffect = false;
+            vanitySpecialEffectCooldown = 0;
+
+            berserkerIsBerserk = false;
+            berserkerDoTransformation = false;
+            berserkerHelmetFrame = 0;
+            berserkerHelmetCounter = 0;
+            berserkerCapeRotation = 0f;
         }
 
         public override void PostUpdateMiscEffects()
         {
             guraGawrTridentRotation = -(player.velocity.X * 0.05f);
             guraGawrTridentRotation += player.velocity.Y * 0.05f;
+
+            if (player.direction == 1)
+                berserkerCapeRotation = (MathHelper.Clamp(player.velocity.Y, 0f, 120f) * 0.05f);
+            else
+                berserkerCapeRotation = -(MathHelper.Clamp(player.velocity.Y, 0f, 120f) * 0.05f);
+
+            berserkerCapeRotation += player.velocity.X * 0.05f;
 
             bool hasRemiWings = false;
             for (int i = 3; i < 8 + player.extraAccessorySlots; i++)
@@ -59,6 +87,7 @@ namespace JunkoAndFriends
                 if (item.type == ModContent.ItemType<RemiliaWings>())
                     hasRemiWings = true;
             }
+
             if (hasRemiWings)
                 RemiliaWingsLogic();
 
@@ -67,6 +96,22 @@ namespace JunkoAndFriends
 
             if (player.armor[11].type == ModContent.ItemType<GuraGawrBody>() && player.armor[12].type == ModContent.ItemType<GuraGawrLeg>())
                 GuraGawrTailLogic();
+
+            if (player.armor[10].type == ModContent.ItemType<BerserkerHead>())
+                BerserkerHelmerTransformationLogic();
+
+            vanitySpecialEffect = false;
+            if (vanitySpecialEffectCooldown > 0)
+                vanitySpecialEffectCooldown--;
+        }
+
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+            if(JunkoAndFriends.SpecialEffectKey.JustPressed && vanitySpecialEffectCooldown <= 0)
+            {
+                vanitySpecialEffect = true;
+                vanitySpecialEffectCooldown = Main.rand.Next(300, 721);
+            }
         }
 
         private void RemiliaWingsLogic()
@@ -125,7 +170,7 @@ namespace JunkoAndFriends
         private void GuraGawrALogic()
         {
             int guraGawrAFrames = 7;
-            if (Main.rand.Next(60000) == 0)
+            if (Main.rand.Next(60000) == 0 || vanitySpecialEffect)
                 guraGawrDoA = true;
 
             if (guraGawrDoA)
@@ -141,6 +186,8 @@ namespace JunkoAndFriends
                 if (guraGawrACounter == speed * 5)
                 {
                     CombatText.NewText(player.Hitbox, Color.White, "A", true);
+                    if (JunkoAndFriends.extraSounds != null)
+                        Main.PlaySound(JunkoAndFriends.extraSounds.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GuraGawrA"));
                 }
 
                 guraGawrAFrame = guraGawrACounter / speed;
@@ -171,6 +218,46 @@ namespace JunkoAndFriends
                 guraGawrTailFrame = 0;
         }
 
+        private void BerserkerHelmerTransformationLogic()
+        {
+            int berserkerHelmetFrames = 8;
+            if (vanitySpecialEffect)
+                berserkerDoTransformation = true;
+
+            if (berserkerDoTransformation)
+            {
+                berserkerHelmetCounter++;
+                if (berserkerIsBerserk)
+                {
+                    if (berserkerHelmetCounter > 5)
+                    {
+                        berserkerHelmetCounter = 0;
+                        berserkerHelmetFrame--;
+                        if (berserkerHelmetFrame <= 0)
+                        {
+                            berserkerHelmetFrame = 0;
+                            berserkerDoTransformation = false;
+                            berserkerIsBerserk = false;
+                        }
+                    }
+                }
+                else if (!berserkerIsBerserk)
+                {
+                    if (berserkerHelmetCounter > 5)
+                    {
+                        berserkerHelmetCounter = 0;
+                        berserkerHelmetFrame++;
+                        if (berserkerHelmetFrame >= berserkerHelmetFrames - 1)
+                        {
+                            berserkerHelmetFrame = berserkerHelmetFrames - 1;
+                            berserkerDoTransformation = false;
+                            berserkerIsBerserk = true;
+                        }
+                    }
+                }
+            }
+        }
+
         public override void ModifyDrawLayers(List<PlayerLayer> layers)
         {
             int headLayer = layers.FindIndex(l => l == PlayerLayer.Head);
@@ -178,6 +265,7 @@ namespace JunkoAndFriends
             if (headLayer > -1)
             {
                 layers.Insert(headLayer + 1, GuraGawrA);
+                layers.Insert(headLayer + 1, BerserkerHelmetBerserk);
             }
 
             JunkoAura.visible = true;
@@ -188,6 +276,8 @@ namespace JunkoAndFriends
             layers.Insert(0, GuraGawrTail);
             GuraGawrTrident.visible = true;
             layers.Insert(0, GuraGawrTrident);
+            BerserkerCape.visible = true;
+            layers.Insert(0, BerserkerCape);
         }
 
         public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo)
@@ -199,7 +289,8 @@ namespace JunkoAndFriends
 
             if (drawPlayer.armor[12].type == ModContent.ItemType<FlandreLeg>() ||
                 drawPlayer.armor[12].type == ModContent.ItemType<RemiliaLeg>() ||
-                drawPlayer.armor[12].type == ModContent.ItemType<GuraGawrLeg>())
+                drawPlayer.armor[12].type == ModContent.ItemType<GuraGawrLeg>() ||
+                drawPlayer.armor[12].type == ModContent.ItemType<BerserkerLeg>())
             {
                 TurnLegTransparent(ref drawInfo);
             }
@@ -209,7 +300,8 @@ namespace JunkoAndFriends
                 TurnBodyTransparent(ref drawInfo);
             }
 
-            if (drawPlayer.armor[10].type == ModContent.ItemType<GuraGawrHeadHair>() || drawPlayer.armor[10].type == ModContent.ItemType<GuraGawrHeadHoodie>())
+            if (drawPlayer.armor[10].type == ModContent.ItemType<GuraGawrHeadHair>() || 
+                drawPlayer.armor[10].type == ModContent.ItemType<GuraGawrHeadHoodie>())
             {
                 TurnHeadTransparent(ref drawInfo);
             }
@@ -552,6 +644,135 @@ namespace JunkoAndFriends
             };
 
             Main.playerDrawData.Add(tridentDrawData);
+        });
+
+        public static readonly PlayerLayer BerserkerHelmetBerserk = new PlayerLayer("JunkoAndFriends", "BerserkerHelmetBerserk", PlayerLayer.Head, delegate (PlayerDrawInfo drawInfo)
+        {
+            if (drawInfo.shadow != 0 || drawInfo.drawPlayer.dead)
+                return;
+
+            Player drawPlayer = drawInfo.drawPlayer;
+            Mod mod = ModLoader.GetMod("JunkoAndFriends");
+
+            if (drawPlayer.armor[10].type != ModContent.ItemType<BerserkerHead>())
+                return;
+
+            Texture2D helmetTexture = mod.GetTexture("ExtraTextures/BerserkerHelmet");
+            Texture2D glowmaskTexture = mod.GetTexture("ExtraTextures/BerserkerHelmet_Glowmask");
+            Texture2D scarfTexture = mod.GetTexture("ExtraTextures/BerserkerScarf");
+
+            float drawHelmetX = (int)drawInfo.position.X + drawPlayer.width / 2 + 2;
+            float drawHelmetY = (int)drawInfo.position.Y + drawPlayer.height + 48;
+
+            float drawScarfX = (int)drawInfo.position.X + drawPlayer.width / 2;
+            float drawScarfY = (int)drawInfo.position.Y + drawPlayer.height + 58;
+
+            SpriteEffects spriteEffects = drawInfo.spriteEffects;
+            
+            switch ((int)spriteEffects)
+            {
+                case 1:
+                case 3:
+                    drawHelmetX -= 4;
+                    drawScarfX += 4;
+                    break;
+            }
+
+            bool flag = ((int)spriteEffects == 0 || (int)spriteEffects == 1);
+            if (JunkoAndFriends.TerrarianUpFrames.Contains(drawPlayer.bodyFrame.Y) && flag)
+            {
+                drawHelmetY -= 2;
+                drawScarfY -= 2;
+            }
+            else if (JunkoAndFriends.TerrarianUpFrames.Contains(drawPlayer.bodyFrame.Y))
+            {
+                drawHelmetY += 2;
+                drawScarfY += 2;
+            }
+
+            if ((int)spriteEffects == 2 || (int)spriteEffects == 3)
+            {
+                drawHelmetY += 10;
+            }
+            Vector2 origin = drawInfo.headOrigin;
+
+            Vector2 helmetPosition = new Vector2(drawHelmetX, drawHelmetY) + drawPlayer.headPosition - Main.screenPosition;
+            Vector2 scarfPosition = new Vector2(drawScarfX, drawScarfY) + drawPlayer.headPosition - Main.screenPosition;
+
+            float alpha = (255 - drawPlayer.immuneAlpha) / 255f;
+            Color color = Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
+
+            float helmetRotation = drawPlayer.headRotation;
+
+            Rectangle helmetFrame = new Rectangle(0, drawPlayer.Friends().berserkerHelmetFrame * (helmetTexture.Height / 8), helmetTexture.Width, helmetTexture.Height / 8);
+            Rectangle scarfFrame = new Rectangle(0, 0, scarfTexture.Width, scarfTexture.Height);
+            DrawData helmetDrawData = new DrawData(helmetTexture, helmetPosition, helmetFrame, color * alpha * (drawPlayer.Friends().berserkerHelmetFrame > 0 ? 1f : 0f), helmetRotation, new Vector2(helmetTexture.Width / 2f, helmetTexture.Height / 2f), 1f, spriteEffects, 0)
+            {
+                shader = drawInfo.headArmorShader
+            };
+
+            DrawData glowmaskDrawData = new DrawData(glowmaskTexture, helmetPosition, helmetFrame, Color.White * alpha * (drawPlayer.Friends().berserkerHelmetFrame > 0 ? 1f : 0f), helmetRotation, new Vector2(helmetTexture.Width / 2f, helmetTexture.Height / 2f), 1f, spriteEffects, 0)
+            {
+                shader = drawInfo.headArmorShader
+            };
+
+            DrawData scarfDrawData = new DrawData(scarfTexture, scarfPosition, scarfFrame, color * alpha * (drawPlayer.Friends().berserkerHelmetFrame == 0 ? 1f : 0f), helmetRotation, new Vector2(helmetTexture.Width / 2f, helmetTexture.Height / 2f), 1f, spriteEffects, 0)
+            {
+                shader = drawInfo.headArmorShader
+            };
+
+            Main.playerDrawData.Add(helmetDrawData);
+            Main.playerDrawData.Add(glowmaskDrawData);
+            Main.playerDrawData.Add(scarfDrawData);
+        });
+
+        public static readonly PlayerLayer BerserkerCape = new PlayerLayer("JunkoAndFriends", "BerserkerCape", PlayerLayer.MiscEffectsBack, delegate (PlayerDrawInfo drawInfo)
+        {
+            if (drawInfo.shadow != 0 || drawInfo.drawPlayer.dead)
+                return;
+
+            Player drawPlayer = drawInfo.drawPlayer;
+            Mod mod = ModLoader.GetMod("JunkoAndFriends");
+
+            if (drawPlayer.armor[11].type != ModContent.ItemType<BerserkerBody>())
+                return;
+
+            Texture2D capeTexture = mod.GetTexture("ExtraTextures/BerserkerCape");
+
+            float drawX = drawInfo.position.X + drawPlayer.width / 2f;
+            float drawY = drawInfo.position.Y + drawPlayer.height / 2f - 4;
+
+            SpriteEffects spriteEffects = drawInfo.spriteEffects;
+            
+            if ((int)spriteEffects == 0 || (int)spriteEffects == 2)
+                drawX -= 12;
+            else
+                drawX += 12;
+
+            if ((int)spriteEffects == 2 || (int)spriteEffects == 3)
+                drawY -= 6;
+
+            if ((int)spriteEffects == 2)
+                spriteEffects = (SpriteEffects)0;
+
+            if ((int)spriteEffects == 3)
+                spriteEffects = (SpriteEffects)1;
+
+            Vector2 origin = drawInfo.bodyOrigin;
+
+            Vector2 capePosition = new Vector2(drawX, drawY) + drawPlayer.bodyPosition - Main.screenPosition;
+
+            float alpha = (255 - drawPlayer.immuneAlpha) / 255f;
+            Color color = Lighting.GetColor((int)((drawInfo.position.X + drawPlayer.width / 2f) / 16f), (int)((drawInfo.position.Y + drawPlayer.height / 2f) / 16f));
+            
+            float capeRotation = drawPlayer.bodyRotation + drawPlayer.Friends().berserkerCapeRotation;
+
+            DrawData capeDrawData = new DrawData(capeTexture, capePosition, null, color * alpha, capeRotation, new Vector2(capeTexture.Width / 2f, 0f), 1f, spriteEffects, 0)
+            {
+                shader = drawInfo.bodyArmorShader
+            };
+
+            Main.playerDrawData.Add(capeDrawData);
         });
     }
 }
