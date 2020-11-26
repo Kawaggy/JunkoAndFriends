@@ -9,7 +9,7 @@ namespace JunkoAndFriends
     {
         public static JunkoAndFriendsPlayer Friends(this Player player) => player.GetModPlayer<JunkoAndFriendsPlayer>();
 
-        public static string HotkeyString(this ModHotKey hotkey)
+        public static string UsedKeys(this ModHotKey hotkey)
         {
             if (Main.dedServ || hotkey == null)
                 return "";

@@ -25,7 +25,7 @@ namespace JunkoAndFriends.Items.GuraGawrVanity
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             TooltipLine line = new TooltipLine(mod, "GuraA",
-                $"Press the {JunkoAndFriends.SpecialEffectKey.HotkeyString()} key to A");
+                $"Press the {JunkoAndFriends.SpecialEffectKey.UsedKeys()} key to A");
             tooltips.Add(line);
         }
     }

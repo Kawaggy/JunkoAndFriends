@@ -25,7 +25,7 @@ namespace JunkoAndFriends.Items.BerserkerVanity
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             TooltipLine line = new TooltipLine(mod, "BerserkerTransform", 
-				$"Press the {JunkoAndFriends.SpecialEffectKey.HotkeyString()} key to go into Berserker Mode");
+				$"Press the {JunkoAndFriends.SpecialEffectKey.UsedKeys()} key to go into Berserker Mode");
             tooltips.Add(line);
         }
     }
