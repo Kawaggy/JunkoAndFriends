@@ -1,12 +1,6 @@
 ﻿using JunkoAndFriends.Items;
-using JunkoAndFriends.Items.BerserkerVanity;
-using JunkoAndFriends.Items.FlandreVanity;
-using JunkoAndFriends.Items.GuraGawrVanity;
-using JunkoAndFriends.Items.JunkoVanity;
-using JunkoAndFriends.Items.RemiliaVanity;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -39,6 +33,8 @@ namespace JunkoAndFriends
         public int berserkerHelmetCounter = 0;
         public float berserkerCapeRotation = 0f;
 
+        public bool pekoraSmoll = false;
+
         public override void Initialize()
         {
             remiWingFrameCounter = 0;
@@ -59,6 +55,8 @@ namespace JunkoAndFriends
             berserkerHelmetFrame = 0;
             berserkerHelmetCounter = 0;
             berserkerCapeRotation = 0f;
+
+            pekoraSmoll = false;
         }
 
         public override void PostUpdate()
@@ -87,6 +85,9 @@ namespace JunkoAndFriends
             if (player.head == mod.GetEquipSlot("BerserkerHead", EquipType.Head))
                 BerserkerHelmerTransformationLogic();
 
+            if (vanitySpecialEffect)
+                pekoraSmoll = !pekoraSmoll;
+
             vanitySpecialEffect = false;
             if (vanitySpecialEffectCooldown > 0)
                 vanitySpecialEffectCooldown--;
@@ -98,7 +99,6 @@ namespace JunkoAndFriends
             {
                 vanitySpecialEffect = true;
                 vanitySpecialEffectCooldown = 7 * 60;
-                Main.NewText("Pressed");
             }
         }
 
@@ -108,7 +108,10 @@ namespace JunkoAndFriends
 
             clone.vanitySpecialEffect = vanitySpecialEffect;
             clone.berserkerIsBerserk = berserkerIsBerserk;
+            clone.berserkerDoTransformation = berserkerDoTransformation;
             clone.guraGawrDoA = guraGawrDoA;
+            clone.pekoraSmoll = pekoraSmoll;
+            clone.berserkerHelmetFrame = berserkerHelmetFrame;
         }
 
         public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
@@ -118,7 +121,10 @@ namespace JunkoAndFriends
             packet.Write((byte)player.whoAmI);
             packet.Write(vanitySpecialEffect);
             packet.Write(berserkerIsBerserk);
+            packet.Write(berserkerDoTransformation);
             packet.Write(guraGawrDoA);
+            packet.Write(pekoraSmoll);
+            packet.Write((byte)berserkerHelmetFrame);
             packet.Send(toWho, fromWho);
         }
 
@@ -143,12 +149,39 @@ namespace JunkoAndFriends
                 packet.Send();
             }
 
+            if (clone.berserkerDoTransformation != berserkerDoTransformation)
+            {
+                var packet = mod.GetPacket();
+                packet.Write((byte)MessageType.SyncBerserkerDoTransformation);
+                packet.Write((byte)player.whoAmI);
+                packet.Write(berserkerDoTransformation);
+                packet.Send();
+            }
+
             if (clone.guraGawrDoA != guraGawrDoA)
             {
                 var packet = mod.GetPacket();
                 packet.Write((byte)MessageType.SyncGuraGawrDoA);
                 packet.Write((byte)player.whoAmI);
                 packet.Write(guraGawrDoA);
+                packet.Send();
+            }
+
+            if (clone.pekoraSmoll != pekoraSmoll)
+            {
+                var packet = mod.GetPacket();
+                packet.Write((byte)MessageType.SyncPekoraSmoll);
+                packet.Write((byte)player.whoAmI);
+                packet.Write(pekoraSmoll);
+                packet.Send();
+            }
+
+            if (clone.berserkerHelmetFrame != berserkerHelmetFrame)
+            {
+                var packet = mod.GetPacket();
+                packet.Write((byte)MessageType.SyncBerserkerHelmetFrame);
+                packet.Write((byte)player.whoAmI);
+                packet.Write((byte)berserkerHelmetFrame);
                 packet.Send();
             }
         }
@@ -304,6 +337,7 @@ namespace JunkoAndFriends
             {
                 layers.Insert(headLayer + 1, GuraGawrA);
                 layers.Insert(headLayer + 1, BerserkerHelmetBerserk);
+                layers.Insert(headLayer + 1, UsadaPekoraHead);
             }
 
             JunkoAura.visible = true;
@@ -318,6 +352,16 @@ namespace JunkoAndFriends
             layers.Insert(0, BerserkerCape);
         }
 
+        public override void ModifyDrawHeadLayers(List<PlayerHeadLayer> layers)
+        {
+            int headLayer = layers.FindIndex(l => l == PlayerHeadLayer.Armor);
+
+            if (headLayer > -1)
+            {
+                layers.Insert(headLayer + 1, UsadaPekoraHeadMap);
+            }
+        }
+
         public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo)
         {
             if (drawInfo.shadow != 0)
@@ -328,18 +372,21 @@ namespace JunkoAndFriends
             if (drawPlayer.legs == mod.GetEquipSlot("FlandreLeg", EquipType.Legs) ||
                 drawPlayer.legs == mod.GetEquipSlot("RemiliaLeg", EquipType.Legs) ||
                 drawPlayer.legs == mod.GetEquipSlot("GuraGawrLeg", EquipType.Legs) ||
-                drawPlayer.legs == mod.GetEquipSlot("BerserkerLeg", EquipType.Legs))
+                drawPlayer.legs == mod.GetEquipSlot("BerserkerLeg", EquipType.Legs) ||
+                drawPlayer.legs == mod.GetEquipSlot("PekoraLeg", EquipType.Legs))
             {
                 TurnLegTransparent(ref drawInfo);
             }
 
-            if (drawPlayer.body == mod.GetEquipSlot("GuraGawrBody", EquipType.Body))
+            if (drawPlayer.body == mod.GetEquipSlot("GuraGawrBody", EquipType.Body) ||
+                drawPlayer.body == mod.GetEquipSlot("PekoraBody", EquipType.Body))
             {
                 TurnBodyTransparent(ref drawInfo);
             }
 
             if (drawPlayer.head == mod.GetEquipSlot("GuraGawrHeadHair", EquipType.Head) ||
-                drawPlayer.head == mod.GetEquipSlot("GuraGawrHeadHoodie", EquipType.Head))
+                drawPlayer.head == mod.GetEquipSlot("GuraGawrHeadHoodie", EquipType.Head) ||
+                drawPlayer.head == mod.GetEquipSlot("PekoraHead", EquipType.Head))
             {
                 TurnHeadTransparent(ref drawInfo);
             }
@@ -751,6 +798,94 @@ namespace JunkoAndFriends
             };
 
             Main.playerDrawData.Add(capeDrawData);
+        });
+
+        public static readonly PlayerLayer UsadaPekoraHead = new PlayerLayer("JunkoAndFriends", "UsadaPekoraHead", PlayerLayer.Head, delegate (PlayerDrawInfo drawInfo)
+        {
+            if (drawInfo.shadow != 0 || drawInfo.drawPlayer.dead)
+                return;
+
+            Player drawPlayer = drawInfo.drawPlayer;
+            Mod mod = ModLoader.GetMod("JunkoAndFriends");
+
+            if (drawPlayer.head != mod.GetEquipSlot("PekoraHead", EquipType.Head))
+                return;
+
+            Texture2D headTexture = mod.GetTexture("ExtraTextures/UsadaPekoraHead");
+
+            float drawHeadX = (int)drawInfo.position.X + drawPlayer.width / 2;
+            float drawHeadY = (int)drawInfo.position.Y + drawPlayer.height - 34;
+            if (drawPlayer.Friends().pekoraSmoll)
+                drawHeadY += 18;
+
+            SpriteEffects spriteEffects = drawInfo.spriteEffects;
+
+            bool flag = ((int)spriteEffects == 0 || (int)spriteEffects == 1);
+            if (JunkoAndFriends.TerrarianUpFrames.Contains(drawPlayer.bodyFrame.Y) && flag)
+            {
+                drawHeadY -= 2;
+            }
+            else if (JunkoAndFriends.TerrarianUpFrames.Contains(drawPlayer.bodyFrame.Y))
+            {
+                drawHeadY += 2;
+            }
+
+            if ((int)spriteEffects == 2 || (int)spriteEffects == 3)
+            {
+                drawHeadY += 20;
+                if (drawPlayer.Friends().pekoraSmoll)
+                    drawHeadY -= 18 * 2;
+            }
+            Vector2 origin = drawInfo.headOrigin;
+
+            Vector2 headPosition = new Vector2(drawHeadX, drawHeadY) + drawPlayer.headPosition - Main.screenPosition;
+
+            float headRotation = drawPlayer.headRotation;
+
+            Rectangle headFrame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
+            
+            DrawData headDrawData = new DrawData(headTexture, headPosition, headFrame, drawInfo.upperArmorColor, headRotation, new Vector2(headTexture.Width / 2f, headTexture.Height / 2f), 1f, spriteEffects, 0)
+            {
+                shader = drawInfo.headArmorShader
+            };
+
+            Main.playerDrawData.Add(headDrawData);
+        });
+
+        public static readonly PlayerHeadLayer UsadaPekoraHeadMap = new PlayerHeadLayer("JunkoAndFriends", "UsadaPekoraHeadMap", delegate (PlayerHeadDrawInfo drawInfo)
+        {
+            Player drawPlayer = drawInfo.drawPlayer;
+            Mod mod = ModLoader.GetMod("JunkoAndFriends");
+
+            if (drawPlayer.head != mod.GetEquipSlot("PekoraHead", EquipType.Head))
+                return;
+
+            Texture2D texture = mod.GetTexture("ExtraTextures/UsadaPekoraHead");
+            float drawX = (int)(drawPlayer.position.X - Main.screenPosition.X - drawPlayer.bodyFrame.Width / 2 +
+                                 drawPlayer.width / 2);
+            float drawY = (int)(drawPlayer.position.Y - Main.screenPosition.Y + drawPlayer.height -
+                drawPlayer.bodyFrame.Height + 4);
+
+            Vector2 position = new Vector2(drawX, drawY) + drawPlayer.headPosition + drawInfo.drawOrigin;
+
+            Rectangle frame = texture.Frame();
+
+            float rotation = drawPlayer.headRotation;
+
+            Vector2 origin = drawInfo.drawOrigin;
+
+            float scale = drawInfo.scale;
+
+            SpriteEffects spriteEffects = drawInfo.spriteEffects;
+
+            DrawData drawData = new DrawData(texture, position, frame, drawInfo.armorColor, rotation, origin, scale,
+                spriteEffects, 0);
+
+            GameShaders.Armor.Apply(drawInfo.armorShader, drawPlayer, drawData);
+
+            drawData.Draw(Main.spriteBatch);
+
+            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
         });
     }
 }

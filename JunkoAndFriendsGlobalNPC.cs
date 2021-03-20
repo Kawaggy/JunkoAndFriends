@@ -1,8 +1,10 @@
-﻿using JunkoAndFriends.Items.FlandreVanity;
+﻿using JunkoAndFriends.Items.AmeliaVanity;
+using JunkoAndFriends.Items.FlandreVanity;
 using JunkoAndFriends.Items.GuraGawrVanity;
 using JunkoAndFriends.Items.JunkoVanity;
 using JunkoAndFriends.Items.MoriVanity;
 using JunkoAndFriends.Items.RemiliaVanity;
+using JunkoAndFriends.Items.UsadaPekoraVanity;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -33,6 +35,21 @@ namespace JunkoAndFriends
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<RemiliaBody>());
                 ++nextSlot;
                 shop.item[nextSlot].SetDefaults(ModContent.ItemType<RemiliaLeg>());
+                ++nextSlot;
+
+                if (NPC.killCount[Item.NPCtoBanner(NPCID.Bunny)] >= 150)
+                {
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<PekoraHead>());
+                    ++nextSlot;
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<PekoraBody>());
+                    ++nextSlot;
+                    shop.item[nextSlot].SetDefaults(ModContent.ItemType<PekoraLeg>());
+                    ++nextSlot;
+                }
+
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<AmeliaHead>());
+                ++nextSlot;
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<AmeliaBody>());
                 ++nextSlot;
 
                 if (JunkoAndFriendsWorld.eclipsePassed)
@@ -107,6 +124,40 @@ namespace JunkoAndFriends
                             break;
                         case 1:
                             Item.NewItem(npc.Hitbox, ModContent.ItemType<MoriBody>());
+                            break;
+                    }
+                }
+            }
+
+            if (npc.type == NPCID.Bunny)
+            {
+                if (NPC.killCount[Item.NPCtoBanner(NPCID.Bunny)] % 100 == 0)
+                {
+                    switch (Main.rand.Next(3))
+                    {
+                        case 0:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<PekoraHead>());
+                            break;
+                        case 1:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<PekoraBody>());
+                            break;
+                        case 2:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<PekoraLeg>());
+                            break;
+                    }
+                }
+                else if (Main.rand.NextFloat() < vanityDrop)
+                {
+                    switch (Main.rand.Next(3))
+                    {
+                        case 0:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<PekoraHead>());
+                            break;
+                        case 1:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<PekoraBody>());
+                            break;
+                        case 2:
+                            Item.NewItem(npc.Hitbox, ModContent.ItemType<PekoraLeg>());
                             break;
                     }
                 }

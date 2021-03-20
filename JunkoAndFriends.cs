@@ -73,7 +73,10 @@ namespace JunkoAndFriends
                     JunkoAndFriendsPlayer player = Main.player[playerNumber].GetModPlayer<JunkoAndFriendsPlayer>();
                     player.vanitySpecialEffect = reader.ReadBoolean();
                     player.berserkerIsBerserk = reader.ReadBoolean();
+                    player.berserkerDoTransformation = reader.ReadBoolean();
                     player.guraGawrDoA = reader.ReadBoolean();
+                    player.pekoraSmoll = reader.ReadBoolean();
+                    player.berserkerHelmetFrame = reader.ReadByte();
                     break;
 
                 case MessageType.SyncVanitySpecialEffect:
@@ -104,6 +107,20 @@ namespace JunkoAndFriends
                     }
                     break;
 
+                case MessageType.SyncBerserkerDoTransformation:
+                    playerNumber = reader.ReadByte();
+                    player = Main.player[playerNumber].GetModPlayer<JunkoAndFriendsPlayer>();
+                    player.berserkerDoTransformation = reader.ReadBoolean();
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        var packet = GetPacket();
+                        packet.Write((byte)MessageType.SyncBerserkerDoTransformation);
+                        packet.Write(playerNumber);
+                        packet.Write(player.berserkerDoTransformation);
+                        packet.Send(-1, playerNumber);
+                    }
+                    break;
+
                 case MessageType.SyncGuraGawrDoA:
                     playerNumber = reader.ReadByte();
                     player = Main.player[playerNumber].GetModPlayer<JunkoAndFriendsPlayer>();
@@ -117,6 +134,34 @@ namespace JunkoAndFriends
                         packet.Send(-1, playerNumber);
                     }
                     break;
+
+                case MessageType.SyncPekoraSmoll:
+                    playerNumber = reader.ReadByte();
+                    player = Main.player[playerNumber].GetModPlayer<JunkoAndFriendsPlayer>();
+                    player.pekoraSmoll = reader.ReadBoolean();
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        var packet = GetPacket();
+                        packet.Write((byte)MessageType.SyncPekoraSmoll);
+                        packet.Write(playerNumber);
+                        packet.Write(player.pekoraSmoll);
+                        packet.Send(-1, playerNumber);
+                    }
+                    break;
+
+                case MessageType.SyncBerserkerHelmetFrame:
+                    playerNumber = reader.ReadByte();
+                    player = Main.player[playerNumber].GetModPlayer<JunkoAndFriendsPlayer>();
+                    player.berserkerHelmetFrame = reader.ReadByte();
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        var packet = GetPacket();
+                        packet.Write((byte)MessageType.SyncBerserkerHelmetFrame);
+                        packet.Write(playerNumber);
+                        packet.Write((byte)player.berserkerHelmetFrame);
+                        packet.Send(-1, playerNumber);
+                    }
+                    break;
             }
         }
     }
@@ -126,6 +171,9 @@ namespace JunkoAndFriends
         SyncPlayer = 0,
         SyncVanitySpecialEffect = 1,
         SyncBerserkerIsBerserk = 2,
-        SyncGuraGawrDoA = 3
+        SyncBerserkerDoTransformation = 3,
+        SyncGuraGawrDoA = 4,
+        SyncPekoraSmoll = 5,
+        SyncBerserkerHelmetFrame = 6
     }
 }
