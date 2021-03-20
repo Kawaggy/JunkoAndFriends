@@ -22,6 +22,7 @@ namespace JunkoAndFriends
             {
                 AddEquipTexture(null, EquipType.Legs, "Junko_Legs", "JunkoAndFriends/Items/JunkoVanity/JunkoLeg_Legs");
                 AddEquipTexture(null, EquipType.Legs, "MoriLeg_Legs", "JunkoAndFriends/Items/MoriVanity/MoriLeg_Legs");
+                AddEquipTexture(null, EquipType.Legs, "AmeliaLeg_Legs", "JunkoAndFriends/Items/AmeliaVanity/AmeliaLeg_Legs");
                 GameShaders.Armor.BindShader(ModContent.ItemType<WaveShaderDye>(), new ArmorShaderData(new Ref<Effect>(GetEffect("Effects/WaveShader")), "WaveShaderPass"));
             }
 
