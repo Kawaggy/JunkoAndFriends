@@ -14,7 +14,6 @@ namespace JunkoAndFriends
     {
         internal static JunkoAndFriends Instance;
         public static ModHotKey SpecialEffectKey; //will make vanities do special things!
-        internal static Mod extraSounds;
 
         public override void Load()
         {
@@ -58,12 +57,6 @@ namespace JunkoAndFriends
             guraGawrDownFrames = null;
             SpecialEffectKey = null;
             TerrarianUpFrames = null;
-            extraSounds = null;
-        }
-
-        public override void PostSetupContent()
-        {
-            extraSounds = ModLoader.GetMod("KawaggyModExtraSounds");
         }
 
         public static List<int> guraGawrDownFrames;

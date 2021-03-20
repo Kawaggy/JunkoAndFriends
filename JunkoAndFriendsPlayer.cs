@@ -225,8 +225,7 @@ namespace JunkoAndFriends
                 if (guraGawrACounter == speed * 5)
                 {
                     CombatText.NewText(player.Hitbox, Color.White, "A", true);
-                    if (JunkoAndFriends.extraSounds != null)
-                        Main.PlaySound(JunkoAndFriends.extraSounds.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GuraGawrA"));
+                    Main.PlaySound(mod.GetLegacySoundSlot(SoundType.Custom, "Sounds/Custom/GuraGawrA"));
                 }
 
                 guraGawrAFrame = guraGawrACounter / speed;
