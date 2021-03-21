@@ -362,6 +362,7 @@ namespace JunkoAndFriends
             }
         }
 
+        public Color saveUpperArmorColor;
         public override void ModifyDrawInfo(ref PlayerDrawInfo drawInfo)
         {
             if (drawInfo.shadow != 0)
@@ -385,10 +386,16 @@ namespace JunkoAndFriends
             }
 
             if (drawPlayer.head == mod.GetEquipSlot("GuraGawrHeadHair", EquipType.Head) ||
-                drawPlayer.head == mod.GetEquipSlot("GuraGawrHeadHoodie", EquipType.Head) ||
-                drawPlayer.head == mod.GetEquipSlot("PekoraHead", EquipType.Head))
+                drawPlayer.head == mod.GetEquipSlot("GuraGawrHeadHoodie", EquipType.Head))
             {
                 TurnHeadTransparent(ref drawInfo);
+            }
+
+            if (drawPlayer.head == mod.GetEquipSlot("PekoraHead", EquipType.Head))
+            {
+                TurnHeadTransparent(ref drawInfo);
+                saveUpperArmorColor = drawInfo.upperArmorColor;
+                drawInfo.upperArmorColor = Color.Transparent;
             }
         }
 
@@ -844,7 +851,7 @@ namespace JunkoAndFriends
 
             Rectangle headFrame = new Rectangle(0, 0, headTexture.Width, headTexture.Height);
             
-            DrawData headDrawData = new DrawData(headTexture, headPosition, headFrame, drawInfo.upperArmorColor, headRotation, new Vector2(headTexture.Width / 2f, headTexture.Height / 2f), 1f, spriteEffects, 0)
+            DrawData headDrawData = new DrawData(headTexture, headPosition, headFrame, drawPlayer.Friends().saveUpperArmorColor, headRotation, new Vector2(headTexture.Width / 2f, headTexture.Height / 2f), 1f, spriteEffects, 0)
             {
                 shader = drawInfo.headArmorShader
             };
