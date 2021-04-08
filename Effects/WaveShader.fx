@@ -15,7 +15,6 @@ float2 uImageSize1;
 
 float4 WaveShader(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 {
-    float frameY = (coords.y * uImageSize0.y - uSourceRect.y) / uSourceRect.w;
     coords.x += sin((100 * (coords.y * 0.1)) + uTime * 8) * 0.06 * (1 - coords.y);
     return tex2D(uImage0, coords);
 }
