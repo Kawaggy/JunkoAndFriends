@@ -89,8 +89,10 @@ namespace JunkoAndFriends
             if (player.head == mod.GetEquipSlot("BerserkerHead", EquipType.Head))
                 BerserkerHelmerTransformationLogic();
 
-            if (vanitySpecialEffect)
-                pekoraSmoll = !pekoraSmoll;
+            if (player.head == mod.GetEquipSlot("PekoraHead", EquipType.Head))
+                if (vanitySpecialEffect)
+                    pekoraSmoll = !pekoraSmoll;
+
 
             vanitySpecialEffect = false;
             if (vanitySpecialEffectCooldown > 0)
