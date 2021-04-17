@@ -14,8 +14,8 @@ namespace JunkoAndFriends.Items.GuraGawrVanity
 
 		public override void SetDefaults()
 		{
-			item.width = 44;
-			item.height = 48;
+			item.width = 34;
+			item.height = 28;
 			item.rare = ItemRarityID.Green;
 			item.vanity = true;
 			item.value = Item.buyPrice(gold: 1);

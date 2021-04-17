@@ -61,15 +61,19 @@ namespace JunkoAndFriends
 
         public override void PostUpdate()
         {
-            guraGawrTridentRotation = -(player.velocity.X * 0.05f);
-            guraGawrTridentRotation += player.velocity.Y * 0.05f;
-
             if (player.direction == 1)
+            {
                 berserkerCapeRotation = (MathHelper.Clamp(player.velocity.Y, 0f, 120f) * 0.05f);
+                guraGawrTridentRotation = -(MathHelper.Clamp(player.velocity.Y, -10f, 400f) * 0.08f);
+            }
             else
+            {
                 berserkerCapeRotation = -(MathHelper.Clamp(player.velocity.Y, 0f, 120f) * 0.05f);
+                guraGawrTridentRotation = (MathHelper.Clamp(player.velocity.Y, -10f, 400f) * 0.08f);
+            }
 
             berserkerCapeRotation += player.velocity.X * 0.05f;
+            guraGawrTridentRotation -= player.velocity.X * 0.1f;
 
             if (player.wings == mod.GetEquipSlot("RemiliaWings", EquipType.Wings))
                 RemiliaWingsLogic();
@@ -559,13 +563,13 @@ namespace JunkoAndFriends
             }
 
             bool flag = ((int)spriteEffects == 0 || (int)spriteEffects == 1);
-            if (JunkoAndFriends.guraGawrDownFrames.Contains(drawPlayer.bodyFrame.Y) && flag)
-            {
-                drawFaceY += 2;
-            }
-            else if (JunkoAndFriends.guraGawrDownFrames.Contains(drawPlayer.bodyFrame.Y))
+            if (JunkoAndFriends.TerrarianUpFrames.Contains(drawPlayer.bodyFrame.Y) && flag)
             {
                 drawFaceY -= 2;
+            }
+            else if (JunkoAndFriends.TerrarianUpFrames.Contains(drawPlayer.bodyFrame.Y))
+            {
+                drawFaceY += 2;
             }
 
             if ((int)spriteEffects == 2 || (int)spriteEffects == 3)
