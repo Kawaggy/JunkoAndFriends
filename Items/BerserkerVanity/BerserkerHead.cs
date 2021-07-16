@@ -19,7 +19,7 @@ namespace JunkoAndFriends.Items.BerserkerVanity
 			item.height = 28;
 			item.rare = ItemRarityID.Green;
 			item.vanity = true;
-			item.value = Item.buyPrice(gold: 1);
+			item.value = Item.sellPrice(gold: 2, silver:40);
 		}
 
 		public override void ModifyTooltips(List<TooltipLine> tooltips)
@@ -28,5 +28,15 @@ namespace JunkoAndFriends.Items.BerserkerVanity
 				$"Press the {JunkoAndFriends.SpecialEffectKey.UsedKeys()} key to go into Berserker Mode");
             tooltips.Add(line);
         }
-    }
+
+		public override void AddRecipes()
+		{
+			ModRecipe recipe = new ModRecipe(mod);
+			recipe.AddIngredient(ItemID.HallowedBar, 2);
+			recipe.AddIngredient(ItemID.SoulofFright, 2);
+			recipe.AddTile(TileID.DemonAltar);
+			recipe.SetResult(this);
+			recipe.AddRecipe();
+		}
+	}
 }
