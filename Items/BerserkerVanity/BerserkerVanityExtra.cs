@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.Graphics.Shaders;
 using Terraria.ModLoader;
 
 namespace JunkoAndFriends.Items.BerserkerVanity
@@ -24,10 +25,10 @@ namespace JunkoAndFriends.Items.BerserkerVanity
             Texture2D scarfTexture = mod.GetTexture("ExtraTextures/BerserkerScarf");
 
             float drawHelmetX = (int)drawInfo.position.X + drawPlayer.width / 2 + 2;
-            float drawHelmetY = (int)drawInfo.position.Y + drawPlayer.height + 48;
+            float drawHelmetY = (int)drawInfo.position.Y + drawPlayer.height + 92;
 
-            float drawScarfX = (int)drawInfo.position.X + drawPlayer.width / 2;
-            float drawScarfY = (int)drawInfo.position.Y + drawPlayer.height + 58;
+            float drawScarfX = (int)drawInfo.position.X + drawPlayer.width / 2 + 8;
+            float drawScarfY = (int)drawInfo.position.Y + drawPlayer.height + 114;
 
             SpriteEffects spriteEffects = drawInfo.spriteEffects;
 
@@ -36,7 +37,6 @@ namespace JunkoAndFriends.Items.BerserkerVanity
                 case 1:
                 case 3:
                     drawHelmetX -= 4;
-                    drawScarfX += 4;
                     break;
             }
 
@@ -129,6 +129,43 @@ namespace JunkoAndFriends.Items.BerserkerVanity
             };
 
             Main.playerDrawData.Add(capeDrawData);
+        });
+
+        public static readonly PlayerHeadLayer BerserkerHeadMap = new PlayerHeadLayer("JunkoAndFriends", "BerserlerHeadLayer", delegate (PlayerHeadDrawInfo drawInfo)
+        {
+            Player drawPlayer = drawInfo.drawPlayer;
+            Mod mod = ModLoader.GetMod("JunkoAndFriends");
+
+            if (drawPlayer.head != mod.GetEquipSlot("BerserkerHead", EquipType.Head))
+                return;
+
+            Texture2D helmetTexture = mod.GetTexture("ExtraTextures/BerserkerHelmet");
+
+            float drawX = (int)(drawPlayer.position.X - Main.screenPosition.X - drawPlayer.bodyFrame.Width / 2 +
+                                 drawPlayer.width / 2);
+            float drawY = (int)(drawPlayer.position.Y - Main.screenPosition.Y + drawPlayer.height -
+                drawPlayer.bodyFrame.Height + 4);
+
+            Vector2 position = new Vector2(drawX, drawY) + drawPlayer.headPosition + drawInfo.drawOrigin;
+
+            Rectangle frame = new Rectangle(0, drawPlayer.Friends().berserkerHelmetFrame * (helmetTexture.Height / 8), helmetTexture.Width, helmetTexture.Height / 8); ;
+
+            float rotation = drawPlayer.headRotation;
+
+            Vector2 origin = drawInfo.drawOrigin;
+
+            float scale = drawInfo.scale;
+
+            SpriteEffects spriteEffects = drawInfo.spriteEffects;
+
+            DrawData drawData = new DrawData(helmetTexture, position, frame, drawInfo.armorColor, rotation, origin, scale,
+                spriteEffects, 0);
+
+            GameShaders.Armor.Apply(drawInfo.armorShader, drawPlayer, drawData);
+
+            drawData.Draw(Main.spriteBatch);
+
+            Main.pixelShader.CurrentTechnique.Passes[0].Apply();
         });
     }
 }

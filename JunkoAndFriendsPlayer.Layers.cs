@@ -42,6 +42,7 @@ namespace JunkoAndFriends
             if (headLayer > -1)
             {
                 layers.Insert(headLayer + 1, UsadaPekoraVanityExtra.UsadaPekoraHeadMap);
+                layers.Insert(headLayer + 1, BerserkerVanityExtra.BerserkerHeadMap);
             }
         }
 
