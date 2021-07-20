@@ -24,7 +24,10 @@ namespace JunkoAndFriends
                 AddEquipTexture(null, EquipType.Legs, "MoriLeg_Legs", "JunkoAndFriends/Items/MoriVanity/MoriLeg_Legs");
                 AddEquipTexture(null, EquipType.Legs, "AmeliaLeg_Legs", "JunkoAndFriends/Items/AmeliaVanity/AmeliaLeg_Legs");
                 GameShaders.Armor.BindShader(ModContent.ItemType<WaveShaderDye>(), new ArmorShaderData(new Ref<Effect>(GetEffect("Effects/WaveShader")), "WaveShaderPass"));
+                GameShaders.Misc["WaveShader"] = new MiscShaderData(new Ref<Effect>(GetEffect("Effects/WaveShader")), "WaveShaderPass");
             }
+            JunkoAndFriendsRenderTargets.Initialize();
+            On.Terraria.Main.Draw += Main_Draw;
 
             SpecialEffectKey = RegisterHotKey("Special Vanity Effect", "NumPad5");
 
@@ -52,12 +55,19 @@ namespace JunkoAndFriends
             };
         }
 
+        private void Main_Draw(On.Terraria.Main.orig_Draw orig, Main self, Microsoft.Xna.Framework.GameTime gameTime)
+        {
+            JunkoAndFriendsRenderTargets.Draw();
+            orig(self, gameTime);
+        }
+
         public override void Unload()
         {
-            Instance = null;
             guraGawrDownFrames = null;
             SpecialEffectKey = null;
             TerrarianUpFrames = null;
+            JunkoAndFriendsRenderTargets.Unload();
+            Instance = null;
         }
 
         public static List<int> guraGawrDownFrames;

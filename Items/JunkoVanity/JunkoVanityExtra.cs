@@ -20,7 +20,6 @@ namespace JunkoAndFriends.Items.JunkoVanity
             if (drawPlayer.head != mod.GetEquipSlot("JunkoHead", EquipType.Head) || drawPlayer.body != mod.GetEquipSlot("JunkoBody", EquipType.Body))
                 return;
 
-            Texture2D texture = mod.GetTexture("ExtraTextures/JunkoAura");
             float drawX = (int)drawInfo.position.X + drawPlayer.width / 2;
             float drawY = (int)drawInfo.position.Y + drawPlayer.height / 2;
 
@@ -34,11 +33,8 @@ namespace JunkoAndFriends.Items.JunkoVanity
 
             SpriteEffects spriteEffects = drawInfo.spriteEffects;
 
-            DrawData drawData = new DrawData(texture, position, null, color, rotation, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, spriteEffects, 0);
-
-            int shaderID = GameShaders.Armor.GetShaderIdFromItemId(ModContent.ItemType<WaveShaderDye>());
-
-            drawData.shader = shaderID;
+            DrawData drawData = new DrawData(JunkoAndFriendsRenderTargets.Junko.junkoAura, position, null, color, rotation, new Vector2(JunkoAndFriendsRenderTargets.Junko.junkoAura.Width / 2f, JunkoAndFriendsRenderTargets.Junko.junkoAura.Height / 2f), 1f, spriteEffects, 0);
+            drawData.shader = drawInfo.bodyArmorShader;
 
             Main.playerDrawData.Add(drawData);
 
